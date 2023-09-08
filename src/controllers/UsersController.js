@@ -43,13 +43,10 @@ class UsersController {
       throw new AppError("Você precisa informar a senha antiga para definir definir uma nova senha!");
 
     if (password && old_password) {
-      console.log(old_password === user[0].password)
       const checkOldPassword = await compare(old_password, user[0].password);
 
       if (!checkOldPassword)
         throw new AppError("A senha antiga não confere");
-
-      console.log("Alterar a senha");
     }
 
     const hashedPassword = await hash(password, 8);
