@@ -25,12 +25,6 @@ class MoviesController {
     res.json();
   }
 
-  //FIXME: 
-  // 1- Search by tag (only)
-  // 2- Search by title (only)
-  // 3- Search by mixed querys
-  // Note: Working with id and id + title 
-
   async index(req, res) {
     const { user_id, title, tags } = req.query;
 
