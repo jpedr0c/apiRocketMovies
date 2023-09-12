@@ -25,7 +25,46 @@ class MoviesController {
     res.json();
   }
 
-  // TODO: Index method
+  //FIXME: 
+  // 1- Search by tag (only)
+  // 2- Search by title (only)
+  // 3- Search by mixed querys
+  // Note: Working with id and id + title 
+
+  async index(req, res) {
+    const { user_id, title, tags } = req.query;
+
+    let movies;
+
+    if (tags) {
+      const filterTags = tags.split(",").map(tag => tag.trim());
+
+      movies = await knex("tags").select([
+        "movies.id",
+        "movies.title",
+        "movies.user_id"
+      ])
+      .where("movies.user_id", user_id)
+      .whereLike("movies.title", `%${title}%`)
+      .whereIn("name", filterTags)
+      .innerJoin("movies", "movies.id", "tags.movie_id")
+      .orderBy("movies.title");
+    } else {
+      movies = await knex("movies").where({ user_id }).whereLike("title", `%${title}%`).orderBy("title");
+    }
+
+    const userTags = await knex("tags").where({ user_id });
+    const moviesWithTags = movies.map(movie => {
+      const movieTags = userTags.filter(tag => tag.movie_id === movie.id);
+
+      return {
+        ...movie,
+        tags: movieTags
+      }
+    });
+
+    return res.json(moviesWithTags);
+  }
 
   async show(req, res) {
     const { id } = req.params;
