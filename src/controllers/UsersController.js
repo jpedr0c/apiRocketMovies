@@ -24,9 +24,9 @@ class UsersController {
 
   async update(req, res) {
     const { name, email, password, old_password } = req.body;
-    const { id } = req.params;
+    const user_id = req.user.id;
     
-    const user = await knex("users").where({ id });
+    const user = await knex("users").where({ id: user_id });
 
     const newName = name ?? user[0].name;
     const newEmail = email ?? user[0].email;
@@ -51,7 +51,7 @@ class UsersController {
 
     const hashedPassword = await hash(password, 8);
 
-    await knex("users").where({ id }).update({ 
+    await knex("users").where({ id: user_id }).update({ 
       name: newName, 
       email: newEmail,
       password: hashedPassword
